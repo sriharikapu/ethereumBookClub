@@ -28,6 +28,7 @@ contract Bridge is usingOraclize{
   /***STORAGE***/
   mapping(address => uint) deposited_balances;
   mapping(address => bool) members;
+  mapping (bytes32 => address) query;
 
   /***EVENTS***/
   event JoinedBookClub(address _from, uint _value);
@@ -37,6 +38,7 @@ contract Bridge is usingOraclize{
 
   function Bridge() public {
        method_data = this.departingMember.selector;
+        setAPI("json(https://rinkeby.infura.io/).result");
        owner = msg.sender;
   }
  
@@ -61,21 +63,25 @@ contract Bridge is usingOraclize{
 
     //we need to append address to end of data_string
 
-  function checkChild(string _transferId) public payable{
+  function checkChild(address _user) public payable{
       if (oraclize_getPrice("URL") * 2  > address(this).balance) {
           emit LogNewOraclizeQuery("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
       } else {
           emit LogNewOraclizeQuery("Oraclize query was sent for locked balance");
-          string memory _parameters  = createQuery_value(_transferId);
-          oraclize_query("URL",api, _parameters);
+          string memory _params  = createQuery_value(toAsciiString(_user));
+           bytes32 queryId = oraclize_query("URL",api,_params);
+             query[queryId] = _user;
           //oraclize_query("URL","json(https://ropsten.infura.io/).result",'{"jsonrpc":"2.0","id":3,"method":"eth_call","params":[{"to":"0x76a83b371ab7232706eac16edf2b726f3a2dbe82","data":"0xad3b80a8"}, "latest"]}');
    }
   }
 
-   function __callback(bytes32 myid, string result) public {
+   function __callback(bytes32 myId, string result) public {
         require (msg.sender == oraclize_cbAddress());
         uint _res = parseInt(result);
-
+        if(_res == 1){
+          address _User = query[myId];
+          _User.transfer(stake);
+        }
     }
 
   function setPartnerBridge(string _connected) public onlyOwner(){
@@ -84,7 +90,7 @@ contract Bridge is usingOraclize{
 
 
   //try: "json(https://localhost:8545).result"
-  function setAPI(string _api, string _params) public onlyOwner(){
+  function setAPI(string _api) public onlyOwner(){
       api = _api; //"json(https://ropsten.infura.io/).result"
     }
 
@@ -92,18 +98,19 @@ contract Bridge is usingOraclize{
     //check id (60 is an open, so we can try it)
     function createQuery_value(string _member_address) public constant returns(string){
       string memory _code = strConcat(fromCode(method_data),_member_address);
-      string memory _part = ' {"jsonrpc":"2.0","id":60,"method":"eth_call","params":[{"to":';
+      string memory _part = ' {"jsonrpc":"2.0","id":4,"method":"eth_call","params":[{"to":';
       string memory _params2 = strConcat(_part,partnerBridge,',"data":"',_code,'"},"latest"]}');
       return _params2;
     }
 
 
-  function departingMember(address _former) public returns(uint){
-  }
 
   function getDeposit(address _user) public returns(uint){
     return deposited_balances[_user];
   }
+  function departingMember(address _former) public returns(uint){
+  }
+
 
   function fromCode(bytes4 code) public view returns (string) {                                                                                    
     bytes memory result = new bytes(10);                                                                                                         
@@ -124,5 +131,25 @@ contract Bridge is usingOraclize{
     }                                                                                                                                            
     revert();                                                                                                                                    
 }                                                                                                                                                
+
+
+
+function toAsciiString(address x) returns (string) {
+    bytes memory s = new bytes(40);
+    for (uint i = 0; i < 20; i++) {
+        byte b = byte(uint8(uint(x) / (2**(8*(19 - i)))));
+        byte hi = byte(uint8(b) / 16);
+        byte lo = byte(uint8(b) - 16 * uint8(hi));
+        s[2*i] = char(hi);
+        s[2*i+1] = char(lo);            
+    }
+    return string(s);
+}
+
+function char(byte b) returns (byte c) {
+    if (b < 10) return byte(uint8(b) + 0x30);
+    else return byte(uint8(b) + 0x57);
+}
+
 
 }

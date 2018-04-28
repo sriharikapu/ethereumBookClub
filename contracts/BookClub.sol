@@ -37,6 +37,18 @@ contract BookClub is usingOraclize{
   uint membersCount;
   uint stake;
   mapping(address => address) matched;
+  mapping (bytes32 => address) query;
+  
+  //Bridge Functionality
+
+  string public partnerBridge; //address of bridge contract on other chain
+  string public api;
+  string public parameters;
+  uint public lastValue;
+  bytes4 private method_data;
+  mapping(address => uint) departingBalance;
+
+  event Print(string);
   
 
   event Matched(address,address);
@@ -45,7 +57,6 @@ contract BookClub is usingOraclize{
 
 
   function BookClub() public{
-    //OAR = OraclizeAddrResolverI(0xf0f20d1a90c618163d762f9f09baa003a60adeff);
     vote_nonce = 0;
     match_nonce =0;
   }
@@ -105,52 +116,49 @@ contract BookClub is usingOraclize{
   //How do we put in a timelock or not let anyone just leave?
   function leaveBookClub() public {
     removeMember(msg.sender);
-    membersCount -= 1;
-    msg.sender.transfer(msg.value / membersCount);
   }
 
   function removeMember(address _traitor) internal{
     members[_traitor] = false;
     emit MemberLeaving(_traitor);
     membersCount -= 1;
+    departingBalance[_traitor] = 1;
   }
-
-//Bridge Functionality
-
-  string public partnerBridge; //address of bridge contract on other chain
-  string public api;
-  string public parameters;
-  uint public lastValue;
-  bytes4 private method_data;
-  mapping(address => uint) departingBalance;
-
-  event Print(string);
-  
-
 
 
   function setBridge() public {
        method_data = this.getDeposit.selector;
        setAPI("json(https://ropsten.infura.io/).result");
-       setPartnerBridge('"0x8c9aed038274ecf28a4f435fe731e2ff249166dc"');
+       //setPartnerBridge('"0x8c9aed038274ecf28a4f435fe731e2ff249166dc"');
   }
 
 //ADD ID TO QUERY
-    function __callback(bytes32 myid, bytes32 result) public {
+    function __callback(bytes32 myId, bytes32 result) public {
         require(msg.sender == oraclize_cbAddress());
         lastValue = uint(result);
+        joinBookClub(query[myId]);
 
     }
 
 
-    function checkMain(string _params)public {
+    function checkMain(address _user)public {
         if (oraclize_getPrice("URL") > address(this).balance) {
             emit Print("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
         } else {
             emit Print("Oraclize query was sent, standing by for the answer..");
-            oraclize_query("URL",api,_params);
+            string memory _n_user = toAsciiString(_user);
+            string memory _params = createQuery_value(_n_user);
+             bytes32 queryId = oraclize_query("URL",api,_params);
+             query[queryId] = _user;
         }
       }
+
+    function createQuery_value(string _member_address) public constant returns(string){
+      string memory _code = strConcat(fromCode(method_data),_member_address);
+      string memory _part = ' {"jsonrpc":"2.0","id":3,"method":"eth_call","params":[{"to":';
+      string memory _params2 = strConcat(_part,partnerBridge,',"data":"',_code,'"},"latest"]}');
+      return _params2;
+    }
 
 
     function joinBookClub(address _user) internal {
@@ -176,4 +184,41 @@ contract BookClub is usingOraclize{
 
     function getDeposit(address _user) public returns(uint){
   }
+
+    function fromCode(bytes4 code) public view returns (string) {                                                                                    
+    bytes memory result = new bytes(10);                                                                                                         
+    result[0] = byte('0');
+    result[1] = byte('x');
+    for (uint i=0; i<4; ++i) {
+        result[2*i+2] = toHexDigit(uint8(code[i])/16);
+        result[2*i+3] = toHexDigit(uint8(code[i])%16);
+    }
+    return string(result);
+}
+
+    function toHexDigit(uint8 d) pure internal returns (byte) {                                                                                      
+    if (0 <= d && d <= 9) {                                                                                                                      
+        return byte(uint8(byte('0')) + d);                                                                                                       
+    } else if (10 <= uint8(d) && uint8(d) <= 15) {                                                                                               
+        return byte(uint8(byte('a')) + d - 10);                                                                                                  
+    }                                                                                                                                            
+    revert();                                                                                                                                    
+}                                                                                                                                                
+
+function toAsciiString(address x) returns (string) {
+    bytes memory s = new bytes(40);
+    for (uint i = 0; i < 20; i++) {
+        byte b = byte(uint8(uint(x) / (2**(8*(19 - i)))));
+        byte hi = byte(uint8(b) / 16);
+        byte lo = byte(uint8(b) - 16 * uint8(hi));
+        s[2*i] = char(hi);
+        s[2*i+1] = char(lo);            
+    }
+    return string(s);
+}
+
+function char(byte b) returns (byte c) {
+    if (b < 10) return byte(uint8(b) + 0x30);
+    else return byte(uint8(b) + 0x57);
+}
 }
