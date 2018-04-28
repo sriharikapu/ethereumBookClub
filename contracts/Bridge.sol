@@ -59,8 +59,8 @@ contract Bridge is usingOraclize{
 
 
   function joinBookClub() payable public returns(uint){
-    require(msg.value == stake && deposited_balances[msg.sender] == 0);
-    deposited_balances[msg.sender] = msg.value;
+    //require(msg.value == stake && deposited_balances[msg.sender] == 0);
+    deposited_balances[msg.sender] = 1;
     total_deposited_supply += msg.value;
     emit JoinedBookClub(msg.sender);
   }
