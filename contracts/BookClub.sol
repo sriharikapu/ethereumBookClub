@@ -48,9 +48,9 @@ contract BookClub is usingOraclize{
   bytes4 private method_data;
   mapping(address => uint) departingBalance;
 
-  event Print(string);
+  event Print(string _issue);
   event Matched(address,address);
-  event NewMember(address);
+  event NewMember(address _newbie);
   event MemberLeaving(address);
 
 
@@ -81,6 +81,18 @@ contract BookClub is usingOraclize{
     require(matched[msg.sender] == _user && _rating <= 5);
     rating[_user] = (rating[_user]*reputation[_user] + _rating) / (reputation[_user] + 1);
   }
+  
+
+  function isMember(address _user) public constant returns(bool){
+    return members[_user];
+  }
+
+  function getRating(address _user) public constant returns(uint){
+    return rating[_user];
+    }
+  function getReputation(address _user) public constant returns(uint){
+    return reputation[_user];
+    }
 
 
   /*can vote to kick someone out*/
@@ -137,7 +149,7 @@ contract BookClub is usingOraclize{
     }
 
 
-    function checkMain(address _user)public {
+    function checkMain(address _user)public payable {
         if (oraclize_getPrice("URL") > address(this).balance) {
             emit Print("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
         } else {
@@ -153,6 +165,7 @@ contract BookClub is usingOraclize{
       string memory _code = strConcat(fromCode(method_data),_member_address);
       string memory _part = ' {"jsonrpc":"2.0","id":3,"method":"eth_call","params":[{"to":';
       string memory _params2 = strConcat(_part,partnerBridge,',"data":"',_code,'"},"latest"]}');
+      emit Print(_params2);
       return _params2;
     }
 
