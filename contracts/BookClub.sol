@@ -34,7 +34,6 @@ contract BookClub is usingOraclize{
 
   mapping(uint => VoteDetails) votes;
   uint vote_nonce;
-  uint match_nonce;
   uint membersCount;
   uint stake;
   mapping(address => address) matched;
@@ -50,8 +49,6 @@ contract BookClub is usingOraclize{
   mapping(address => uint) departingBalance;
 
   event Print(string);
-  
-
   event Matched(address,address);
   event NewMember(address);
   event MemberLeaving(address);
@@ -59,7 +56,8 @@ contract BookClub is usingOraclize{
 
   function BookClub() public{
     vote_nonce = 0;
-    match_nonce =0;
+    method_data = this.getDeposit.selector;
+    setAPI("json(https://ropsten.infura.io/).result");
   }
   
 
@@ -124,12 +122,6 @@ contract BookClub is usingOraclize{
     emit MemberLeaving(_traitor);
     membersCount -= 1;
     departingBalance[_traitor] = 1;
-  }
-
-
-  function setBridge() public {
-       method_data = this.getDeposit.selector;
-       setAPI("json(https://ropsten.infura.io/).result");
   }
 
 //ADD ID TO QUERY
