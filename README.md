@@ -1,4 +1,4 @@
-# Oracle bridge
+# Etherum Book Club
 
 ![Bridge](./public/book-club.jpg)
 
