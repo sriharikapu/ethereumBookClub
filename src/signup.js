@@ -5,7 +5,6 @@ import './App.css';
 import { Button,Form, FormGroup, Col, ControlLabel, FormControl
           } from 'react-bootstrap';
 import {Link} from 'react-router-dom';
-import {Home} from './home';
 
 class SignUp extends Component {
 

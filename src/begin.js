@@ -10,7 +10,7 @@ class Begin extends Component {
       <Navbar>
         <Navbar.Header>
           <Navbar.Brand>
-            <a><Link to="homepage/">CoinBook</Link></a>
+            <Link to="homepage/">CoinBook</Link>
           </Navbar.Brand>
           <Navbar.Brand>
             <a href="">Hackital</a>
@@ -50,7 +50,7 @@ class Begin extends Component {
         </Jumbotron>
 
         <Alert bsStyle="info"> Membership Agreement: 10 eth for membership fee and member for life!</Alert>
-        
+
 
 
       </div>
