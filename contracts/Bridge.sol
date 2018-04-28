@@ -19,35 +19,39 @@ contract Bridge is usingOraclize{
   uint public total_deposited_supply;
   uint transNonce;
   string public partnerBridge; //address of bridge contract on other chain
-  string api;
-  string parameters;
+  string private api;
   address public owner;
   bytes4 private method_data;
   uint public stake;
 
   /***STORAGE***/
   mapping(address => uint) deposited_balances;
-  mapping(address => bool) members;
   mapping (bytes32 => address) query;
 
   /***EVENTS***/
-  event JoinedBookClub(address _from, uint _value);
+  event JoinedBookClub(address _from);
   event LogUpdated(string value);
   event LogNewOraclizeQuery(string description);
-  /***FUNCTIONS***/
 
-  function Bridge() public {
-       method_data = this.departingMember.selector;
-        setAPI("json(https://rinkeby.infura.io/).result");
-       owner = msg.sender;
-  }
- 
-  /***MODIFIERS***/
+    /***MODIFIERS***/
   /// @dev Access modifier for Owner functionality
   modifier onlyOwner() {
       require(msg.sender == owner);
       _;
   }
+
+  /***FUNCTIONS***/
+
+  function Bridge() public {
+      method_data = this.departingMember.selector;
+      owner = msg.sender;
+      setAPI("json(https://rinkeby.infura.io/).result");
+  }
+
+  function setFee(uint _fee) public onlyOwner(){
+    stake = _fee;
+  }
+ 
 
   function setOwner (address _owner) public onlyOwner(){
     owner = _owner;
@@ -55,23 +59,23 @@ contract Bridge is usingOraclize{
 
 
   function joinBookClub() payable public returns(uint){
-    require(msg.value == stake && members[msg.sender] == false);
+    require(msg.value == stake && deposited_balances[msg.sender] == 0);
     deposited_balances[msg.sender] = msg.value;
     total_deposited_supply += msg.value;
+    emit JoinedBookClub(msg.sender);
   }
 
 
     //we need to append address to end of data_string
 
   function checkChild(address _user) public payable{
-      if (oraclize_getPrice("URL") * 2  > address(this).balance) {
+      if (oraclize_getPrice("URL") * 2  > msg.value) {
           emit LogNewOraclizeQuery("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
       } else {
           emit LogNewOraclizeQuery("Oraclize query was sent for locked balance");
           string memory _params  = createQuery_value(toAsciiString(_user));
-           bytes32 queryId = oraclize_query("URL",api,_params);
-             query[queryId] = _user;
-          //oraclize_query("URL","json(https://ropsten.infura.io/).result",'{"jsonrpc":"2.0","id":3,"method":"eth_call","params":[{"to":"0x76a83b371ab7232706eac16edf2b726f3a2dbe82","data":"0xad3b80a8"}, "latest"]}');
+          bytes32 queryId = oraclize_query("URL",api,_params);
+          query[queryId] = _user;
    }
   }
 
@@ -146,7 +150,7 @@ function toAsciiString(address x) returns (string) {
     return string(s);
 }
 
-function char(byte b) returns (byte c) {
+function char(byte b) internal returns (byte c) {
     if (b < 10) return byte(uint8(b) + 0x30);
     else return byte(uint8(b) + 0x57);
 }

@@ -31,6 +31,7 @@ contract BookClub is usingOraclize{
     uint yays;
     uint nays;
   }
+
   mapping(uint => VoteDetails) votes;
   uint vote_nonce;
   uint match_nonce;
@@ -129,15 +130,18 @@ contract BookClub is usingOraclize{
   function setBridge() public {
        method_data = this.getDeposit.selector;
        setAPI("json(https://ropsten.infura.io/).result");
-       //setPartnerBridge('"0x8c9aed038274ecf28a4f435fe731e2ff249166dc"');
   }
 
 //ADD ID TO QUERY
-    function __callback(bytes32 myId, bytes32 result) public {
+    function __callback(bytes32 myId, string result) public {
         require(msg.sender == oraclize_cbAddress());
-        lastValue = uint(result);
-        joinBookClub(query[myId]);
-
+        lastValue = parseInt(result);
+        if(lastValue > 0){
+          address _user = query[myId];
+          members[_user] = true;
+          emit NewMember(_user);
+          membersCount += 1;
+        }
     }
 
 
@@ -159,14 +163,6 @@ contract BookClub is usingOraclize{
       string memory _params2 = strConcat(_part,partnerBridge,',"data":"',_code,'"},"latest"]}');
       return _params2;
     }
-
-
-    function joinBookClub(address _user) internal {
-    members[_user] = true;
-    emit NewMember(_user);
-    membersCount += 1;
-
-  }
 
 
   function setPartnerBridge(string _connected) public{
