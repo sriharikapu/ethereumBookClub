@@ -1,7 +1,12 @@
 
-pragma solidity ^0.4.19;
+pragma solidity ^0.4.21;
 
-contract BookClub {
+import "./Oraclize/Oraclize_API.sol";
+import "./libraries/SafeMath.sol";
+
+contract BookClub is usingOraclize{
+
+    using SafeMath for uint256;
 
   mapping(address => bool) members;
   mapping(address => uint) reputation;
@@ -10,6 +15,12 @@ contract BookClub {
   mapping(uint => Details) matches;
   struct Details{
     address maker;
+    address taker;
+    uint matchId;
+  }
+
+    struct userDetails{
+    string r;
     address taker;
     uint matchId;
   }
@@ -33,20 +44,13 @@ contract BookClub {
   event MemberLeaving(address);
 
 
-  constructor() public{
-    OAR = OraclizeAddrResolverI(0xf0f20d1a90c618163d762f9f09baa003a60adeff);
+  function BookClub() public{
+    //OAR = OraclizeAddrResolverI(0xf0f20d1a90c618163d762f9f09baa003a60adeff);
     vote_nonce = 0;
     match_nonce =0;
   }
   
 
-  function joinBookClub() payable public {
-    require(msg.value >= stake);
-    members[msg.sender] = true;
-    emit NewMember(msg.sender);
-    membersCount += 1;
-
-  }
 
   function requestNewBook() public {
     if(nextInLine == address(0)){
@@ -119,29 +123,42 @@ contract BookClub {
   uint public lastValue;
   bytes4 private method_data;
   mapping(address => uint) departingBalance;
+
+  event Print(string);
   
 
 
 
   function setBridge() public {
-       method_data = this.retrieveData.selector;
+       method_data = this.getDeposit.selector;
        setAPI("json(https://ropsten.infura.io/).result");
        setPartnerBridge('"0x8c9aed038274ecf28a4f435fe731e2ff249166dc"');
   }
 
-    function __callback(bytes32 myid, bytes32 result) {
+//ADD ID TO QUERY
+    function __callback(bytes32 myid, bytes32 result) public {
         require(msg.sender == oraclize_cbAddress());
         lastValue = uint(result);
+
     }
 
 
     function checkMain(string _params)public {
-        if (oraclize_getPrice("URL") > this.balance) {
-            Print("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
+        if (oraclize_getPrice("URL") > address(this).balance) {
+            emit Print("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
         } else {
-            Print("Oraclize query was sent, standing by for the answer..");
+            emit Print("Oraclize query was sent, standing by for the answer..");
             oraclize_query("URL",api,_params);
         }
+      }
+
+
+    function joinBookClub(address _user) internal {
+    members[_user] = true;
+    emit NewMember(_user);
+    membersCount += 1;
+
+  }
 
 
   function setPartnerBridge(string _connected) public{
@@ -154,8 +171,9 @@ contract BookClub {
   }
 
   function departingMember(address _former) public returns(uint){
-    return departingBalance[address];
+    return departingBalance[_former];
   }
-}
 
+    function getDeposit(address _user) public returns(uint){
+  }
 }

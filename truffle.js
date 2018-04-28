@@ -3,6 +3,11 @@ var mnemonic = 'disorder forward mean duty choose level debris twist desk other 
 
 module.exports = {
   networks: {
+  	development: {
+      host: "localhost",
+      port: 8545,
+      network_id: "*" // Match any network id
+    },
     ropsten: {
       provider: function() {
         return new HDWalletProvider(mnemonic, "	https://ropsten.infura.io/mpFYodHneqDf2O5rWHwL")

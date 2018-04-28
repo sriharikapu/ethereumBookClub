@@ -1,5 +1,7 @@
-var SimpleStorage = artifacts.require("./SimpleStorage.sol");
+var Bridge = artifacts.require("./Bridge.sol");
+var BookClub = artifacts.require("./BookClub.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(SimpleStorage);
+  deployer.deploy(BookClub);
+  deployer.deploy(Bridge);
 };
