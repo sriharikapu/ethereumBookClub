@@ -1,5 +1,7 @@
 
 pragma solidity ^0.4.21;
+//Working
+// {"jsonrpc":"2.0","id":3,"method":"eth_call","params":[{"to":"0x8276c4012116588547da5ce1e936fee6d2a99350","data":"0xa230c524000000000000000000000000931b582d4573284193cbfbe5e76bd41405961be8"},"latest"]}
 
 import "./Oraclize/Oraclize_API.sol";
 import "./libraries/SafeMath.sol";
@@ -56,7 +58,7 @@ contract BookClub is usingOraclize{
 
   function BookClub() public{
     vote_nonce = 0;
-    method_data = this.getDeposit.selector;
+    method_data = this.isMember.selector;
     setAPI("json(https://ropsten.infura.io/).result");
   }
   
@@ -136,7 +138,7 @@ contract BookClub is usingOraclize{
     departingBalance[_traitor] = 1;
   }
 
-//ADD ID TO QUERY
+//Need to change callback to accept bool as result
     function __callback(bytes32 myId, string result) public {
         require(msg.sender == oraclize_cbAddress());
         lastValue = parseInt(result);
@@ -162,7 +164,7 @@ contract BookClub is usingOraclize{
       }
 
     function createQuery_value(string _member_address) public constant returns(string){
-      string memory _code = strConcat(fromCode(method_data),_member_address);
+      string memory _code = strConcat(fromCode(method_data),"000000000000000000000000",_member_address);
       string memory _part = ' {"jsonrpc":"2.0","id":3,"method":"eth_call","params":[{"to":';
       string memory _params2 = strConcat(_part,partnerBridge,',"data":"',_code,'"},"latest"]}');
       emit Print(_params2);
@@ -210,12 +212,12 @@ contract BookClub is usingOraclize{
 
 function toAsciiString(address x) returns (string) {
     bytes memory s = new bytes(40);
-    for (uint i = 0; i < 20; i++) {
+    for (uint i = 2; i < 20; i++) {
         byte b = byte(uint8(uint(x) / (2**(8*(19 - i)))));
         byte hi = byte(uint8(b) / 16);
         byte lo = byte(uint8(b) - 16 * uint8(hi));
-        s[2*i] = char(hi);
-        s[2*i+1] = char(lo);            
+        s[2*i+2] = char(hi);
+        s[2*i+3] = char(lo);            
     }
     return string(s);
 }
