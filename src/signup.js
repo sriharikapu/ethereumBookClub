@@ -1,13 +1,17 @@
+/*eslint-enable no-unused-vars*/
+
 import React, { Component } from 'react';
 import './App.css';
-import { Button, Jumbotron, Navbar, NavItem, Nav, NavDropdown, MenuItem, Alert,
-          Form, FormGroup, Col, ControlLabel, FormControl, Checkbox
+import { Button,Form, FormGroup, Col, ControlLabel, FormControl
           } from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 
 class SignUp extends Component {
+
   render() {
     return (
+
+
       <div className="App">
 
       <Form horizontal>
@@ -43,7 +47,6 @@ class SignUp extends Component {
           </Col>
         </FormGroup>
       </Form>
-
 
 
 

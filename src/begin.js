@@ -10,7 +10,7 @@ class Begin extends Component {
       <Navbar>
         <Navbar.Header>
           <Navbar.Brand>
-            <a href="/home">CoinBook</a>
+            <Link to="homepage/">CoinBook</Link>
           </Navbar.Brand>
           <Navbar.Brand>
             <a href="">Hackital</a>
@@ -38,7 +38,6 @@ class Begin extends Component {
         <header className="App-header">
           <h1 className="App-title">Welcome To CoinBook</h1>
         </header>
-        <p className="App-intro">
         <Jumbotron>
           <h1>Hello, Book Lover and Blockchain Enthusiast!</h1>
           <p>
@@ -49,7 +48,7 @@ class Begin extends Component {
             <Button bsStyle="info" ><Link to="signup/">Join Club </Link></Button>
           </p>
         </Jumbotron>
-        </p>
+
         <Alert bsStyle="info"> Membership Agreement: 10 eth for membership fee and member for life!</Alert>
 
 
