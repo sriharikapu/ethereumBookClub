@@ -4,23 +4,29 @@ import React, { Component } from 'react';
 import './App.css';
 import { Button,Form, FormGroup, Col, ControlLabel, FormControl
           } from 'react-bootstrap';
-import {Link} from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 
 class SignUp extends Component {
 
+  handleSubmit(e) {
+    e.preventDefault()
+    
+  }
+
   render() {
+    
     return (
 
 
       <div className="App">
 
-      <Form horizontal>
+      <Form horizontal  onSubmit={(e) => this.handleSubmit(e)}>
         <FormGroup controlId="formHorizontalEmail">
           <Col componentClass={ControlLabel} sm={2}>
             Email
           </Col>
           <Col sm={10}>
-            <FormControl type="email" placeholder="Email" />
+            <FormControl type="input" placeholder="Email" />
           </Col>
         </FormGroup>
 
@@ -43,7 +49,7 @@ class SignUp extends Component {
         </FormGroup>
         <FormGroup>
           <Col smOffset={2} sm={8}>
-            <Button id="create-profile-button" type="submit"><Link to="homepage/">Submit</Link></Button>
+            <Button id="create-profile-button" type="submit"><div onSubmit={(e) => this.handleSubmit(e)}>Submit</div></Button>
           </Col>
         </FormGroup>
       </Form>
