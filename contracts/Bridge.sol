@@ -57,6 +57,14 @@ contract Bridge is usingOraclize{
     owner = _owner;
   }
 
+  function isMember(address _user) public constant returns(bool){
+    bool _val = false;
+    if(deposited_balances[_user] > 0){
+      _val = true;
+    }
+    return _val;
+  }
+
 
   function joinBookClub() payable public returns(uint){
     //require(msg.value == stake && deposited_balances[msg.sender] == 0);

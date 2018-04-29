@@ -183,7 +183,9 @@ contract BookClub is usingOraclize{
     return departingBalance[_former];
   }
 
-    function getDeposit(address _user) public returns(uint){
+  mapping (address => uint) deposited_balances;
+  function getDeposit(address _user) public returns(uint){
+    return deposited_balances[_user];
   }
 
     function fromCode(bytes4 code) public view returns (string) {                                                                                    
