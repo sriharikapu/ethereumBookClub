@@ -15,7 +15,7 @@ let getWeb4 = new Promise(function(resolve, reject) {
         web3: web3
       }
 
-      console.log('Injected web3 detected.');
+      console.log('Signed into Rinkeby. Injected web3 detected.');
 
       resolve(results)
     } else {

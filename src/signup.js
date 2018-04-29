@@ -4,23 +4,49 @@ import React, { Component } from 'react';
 import './App.css';
 import { Button,Form, FormGroup, Col, ControlLabel, FormControl
           } from 'react-bootstrap';
-import {Link} from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 
 class SignUp extends Component {
 
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      email: "",
+      books: "",
+      trade: ""
+    }
+    this.handleChange = this.handleChange.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
+  }
+
+  handleSubmit(e) {
+    e.preventDefault()
+    console.log(this.state)
+  }
+
+  handleChange(e) {
+    let name = e.target.name
+    let val = e.target.value
+    let newState = {...this.state}
+    newState[name] = val
+    this.setState(newState)
+  }
+
   render() {
+    
     return (
 
 
       <div className="App">
 
-      <Form horizontal>
+      <Form horizontal  onSubmit={(e) => this.handleSubmit(e)}>
         <FormGroup controlId="formHorizontalEmail">
           <Col componentClass={ControlLabel} sm={2}>
             Email
           </Col>
           <Col sm={10}>
-            <FormControl type="email" placeholder="Email" />
+            <FormControl name='email' type="input" placeholder="Email" onChange={this.handleChange} />
           </Col>
         </FormGroup>
 
@@ -29,7 +55,7 @@ class SignUp extends Component {
             Favourite Books
           </Col>
           <Col sm={10}>
-            <FormControl type="input" placeholder="Book Preferences, seperated by commas" />
+            <FormControl name='books' type="input" placeholder="Book Preferences, seperated by commas" onChange={this.handleChange}/>
           </Col>
         </FormGroup>
 
@@ -38,12 +64,12 @@ class SignUp extends Component {
             Book Willing To Trade
           </Col>
           <Col sm={10}>
-            <FormControl type="input" placeholder="Books to trade, seperated by commas" />
+            <FormControl name='trade' type="input" placeholder="Books to trade, seperated by commas" onChange={this.handleChange}/>
           </Col>
         </FormGroup>
         <FormGroup>
           <Col smOffset={2} sm={8}>
-            <Button id="create-profile-button" type="submit"><Link to="homepage/">Submit</Link></Button>
+            <Button id="create-profile-button" type="submit"><div onSubmit={(e) => this.handleSubmit(e)}>Submit</div></Button>
           </Col>
         </FormGroup>
       </Form>
