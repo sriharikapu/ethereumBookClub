@@ -6,6 +6,16 @@
 
 ## Setup 
 
+npm modules were already installed on Git Hub, like a boss! (...sorry)
+
+npm start
+
+navigate to http://localhost:3000/#/start
+
+Go through the first sign in on the Ropsten Network (you will be expected to pay 0.1 test eth)
+
+The form on the second page is sent on the Rinkeby Network, but the transaction won't require additional value to be sent.
+
 ### Variables
 
 
