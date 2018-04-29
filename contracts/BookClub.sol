@@ -1,5 +1,7 @@
 
 pragma solidity ^0.4.21;
+//Working
+// {"jsonrpc":"2.0","id":3,"method":"eth_call","params":[{"to":"0x8276c4012116588547da5ce1e936fee6d2a99350","data":"0xa230c524000000000000000000000000931b582d4573284193cbfbe5e76bd41405961be8"},"latest"]}
 
 import "./Oraclize/Oraclize_API.sol";
 import "./libraries/SafeMath.sol";
@@ -19,18 +21,22 @@ contract BookClub is usingOraclize{
     uint matchId;
   }
 
-    struct userDetails{
-    string r;
-    address taker;
-    uint matchId;
+    struct UserDetails{
+    string email;
+    string preferences;
+    string booksAvailable;
   }
 
+  mapping(address => UserDetails) userInfo;
   struct VoteDetails{
     address traitor;
     uint start;
     uint yays;
     uint nays;
   }
+
+
+
 
   mapping(uint => VoteDetails) votes;
   uint vote_nonce;
@@ -56,7 +62,7 @@ contract BookClub is usingOraclize{
 
   function BookClub() public{
     vote_nonce = 0;
-    method_data = this.getDeposit.selector;
+    method_data = this.isMember.selector;
     setAPI("json(https://ropsten.infura.io/).result");
   }
   
@@ -82,6 +88,18 @@ contract BookClub is usingOraclize{
     rating[_user] = (rating[_user]*reputation[_user] + _rating) / (reputation[_user] + 1);
   }
   
+  function setUserInfo(string _email,string _pref, string _books) public {
+    userInfo[msg.sender] = UserDetails({
+      email:_email,
+      preferences:_pref,
+      booksAvailable:_books
+      });
+  }
+
+  function getUserInfo(address _member) public constant returns(string,string,string){
+    UserDetails memory _user = userInfo[_member];
+    return(_user.email,_user.preferences,_user.booksAvailable);
+  }
 
   function isMember(address _user) public constant returns(bool){
     return members[_user];
@@ -136,7 +154,7 @@ contract BookClub is usingOraclize{
     departingBalance[_traitor] = 1;
   }
 
-//ADD ID TO QUERY
+//Need to change callback to accept bool as result
     function __callback(bytes32 myId, string result) public {
         require(msg.sender == oraclize_cbAddress());
         lastValue = parseInt(result);
@@ -162,7 +180,7 @@ contract BookClub is usingOraclize{
       }
 
     function createQuery_value(string _member_address) public constant returns(string){
-      string memory _code = strConcat(fromCode(method_data),_member_address);
+      string memory _code = strConcat(fromCode(method_data),"000000000000000000000000",_member_address);
       string memory _part = ' {"jsonrpc":"2.0","id":3,"method":"eth_call","params":[{"to":';
       string memory _params2 = strConcat(_part,partnerBridge,',"data":"',_code,'"},"latest"]}');
       emit Print(_params2);
@@ -171,7 +189,7 @@ contract BookClub is usingOraclize{
 
 
   function setPartnerBridge(string _connected) public{
-    partnerBridge = _connected;
+    partnerBridge =  strConcat('"',_connected,'"');
   }
   
   function setAPI(string _api) public returns(string){
@@ -219,7 +237,6 @@ function toAsciiString(address x) returns (string) {
     }
     return string(s);
 }
-
 function char(byte b) returns (byte c) {
     if (b < 10) return byte(uint8(b) + 0x30);
     else return byte(uint8(b) + 0x57);

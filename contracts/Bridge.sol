@@ -109,17 +109,13 @@ contract Bridge is usingOraclize{
     //can make internal once it works
     //check id (60 is an open, so we can try it)
     function createQuery_value(string _member_address) public constant returns(string){
-      string memory _code = strConcat(fromCode(method_data),_member_address);
+      string memory _code = strConcat(fromCode(method_data),"000000000000000000000000",_member_address);
       string memory _part = ' {"jsonrpc":"2.0","id":4,"method":"eth_call","params":[{"to":';
       string memory _params2 = strConcat(_part,partnerBridge,',"data":"',_code,'"},"latest"]}');
       return _params2;
     }
 
 
-
-  function getDeposit(address _user) public returns(uint){
-    return deposited_balances[_user];
-  }
   function departingMember(address _former) public returns(uint){
   }
 
@@ -144,8 +140,6 @@ contract Bridge is usingOraclize{
     revert();                                                                                                                                    
 }                                                                                                                                                
 
-
-
 function toAsciiString(address x) returns (string) {
     bytes memory s = new bytes(40);
     for (uint i = 0; i < 20; i++) {
@@ -157,11 +151,9 @@ function toAsciiString(address x) returns (string) {
     }
     return string(s);
 }
-
-function char(byte b) internal returns (byte c) {
+function char(byte b) returns (byte c) {
     if (b < 10) return byte(uint8(b) + 0x30);
     else return byte(uint8(b) + 0x57);
 }
-
 
 }
