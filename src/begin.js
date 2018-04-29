@@ -4,7 +4,7 @@ import { Button, Jumbotron, Navbar, NavItem, Nav, NavDropdown, MenuItem, Alert} 
 import { withRouter} from 'react-router-dom';
 
 import getWeb3 from './utils/getWeb3'
-import getWeb4 from './utils/getWeb4'
+// import getWeb4 from './utils/getWeb4'
 import Bridge from '../build/contracts/Bridge.json'
 
 class Begin extends Component {
@@ -13,8 +13,7 @@ class Begin extends Component {
     super(props)
 
     this.state = {
-      web3: null,
-      web4: null
+      web3: null
     }
     this._poll()
     this.handleClick = this.handleClick.bind(this)
@@ -36,24 +35,15 @@ class Begin extends Component {
       console.log('Error finding web3.')
     })
 
-    getWeb4
-    .then(results => {
-      this.setState({
-        web4: results.web4
-      })
-
-      // Instantiate contract once web3 provided.
-    })
-    .catch(() => {
-      console.log('Error finding web3.')
-    })
   }
 
   _poll(){
+    let myTimeOut = setTimeout(this._poll.bind(this), 1000);
+
     function myStopFunction() {
       clearTimeout(myTimeOut);
     }
-    if (this.state.web3 && !this.state.web4) {
+    if (this.state.web3) {
     const contract = require('truffle-contract')
     const bridge = contract(Bridge)
     bridge.setProvider(this.state.web3.currentProvider)
@@ -65,11 +55,12 @@ class Begin extends Component {
     this.state.web3.eth.getAccounts((error, accounts) => {
       bridge.deployed().then((instance) => {
         bridgeInstance = instance
+        // console.log('instance')
 
       }).then((result) => {
         // Get the value from the contract to prove it worked.
-        console.log(accounts)
         bridgeInstance.isMember.call(accounts[0]).then((result) => {
+          // console.log(result)
           if(result) {
             alert("Your a Member! Switch to Rinkeby in MetaMask")
             if(this.props.history.location.pathname !== '/signup') { 
@@ -90,7 +81,6 @@ class Begin extends Component {
   }
   
 
-    let myTimeOut = setTimeout(this._poll.bind(this), 1000);
   }
 
   handleClick() {

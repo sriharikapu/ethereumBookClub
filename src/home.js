@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
-import { Button,ButtonToolbar, Navbar, NavItem, Nav, NavDropdown, MenuItem,  } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import {  Navbar, NavItem, Nav, NavDropdown, MenuItem,  } from 'react-bootstrap';
+// import { Link } from 'react-router-dom';
 // import {RequestBook} from './RequestBook';
 
 class Home extends Component {
@@ -37,19 +37,7 @@ class Home extends Component {
         <header className="App-header">
           <h1 className="App-title">Welcome To DeCentralBooking</h1>
         </header>
-
-      <a id="view-profile" href="/view-profile">View Profile</a>
-      <div id="button-group-center">
-        <ButtonToolbar>
-          <Button bsStyle="info"><Link to="request/"> View Member Ranking</Link> </Button>
-        </ButtonToolbar>
-        <ButtonToolbar>
-          <Button bsStyle="warning"><Link to="request/"> View Current Scam Votes</Link> </Button>
-        </ButtonToolbar>
-        <ButtonToolbar>
-          <Button bsStyle="danger"><Link to="request/"> Report Scammer </Link></Button>
-        </ButtonToolbar>
-      </div>
+          <h3 style={{padding: 100 + 'px', textAlign: 'center'}}>You've just made sent transactions on two differt chains with a bridge function thanks to Oraclize.it</h3>
       </div>
     )
   }

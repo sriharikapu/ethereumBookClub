@@ -125,6 +125,8 @@ class SignUp extends Component {
           <h1 className="App-title">Welcome To DeCentralBooking</h1>
         </header>
 
+        <h3> Please move to the <strong>Rinkeby Network</strong>!</h3>
+
       <Form horizontal  onSubmit={(e) => this.handleSubmit(e)} className="App-Form">
         <FormGroup controlId="formHorizontalEmail">
           <Col componentClass={ControlLabel} sm={2}>
@@ -137,10 +139,10 @@ class SignUp extends Component {
 
         <FormGroup controlId="formHorizontalPassword">
           <Col componentClass={ControlLabel} sm={2}>
-            Favourite Books
+            Favorite Books
           </Col>
           <Col sm={10}>
-            <FormControl name='books' type="input" placeholder="Book Preferences, seperated by commas" onChange={this.handleChange}/>
+            <FormControl name='books' type="input" placeholder="Book Preferences" onChange={this.handleChange}/>
           </Col>
         </FormGroup>
 
@@ -149,7 +151,7 @@ class SignUp extends Component {
             Book Willing To Trade
           </Col>
           <Col sm={10}>
-            <FormControl name='trade' type="input" placeholder="Books to trade, seperated by commas" onChange={this.handleChange}/>
+            <FormControl name='trade' type="input" placeholder="Books to Trade" onChange={this.handleChange}/>
           </Col>
         </FormGroup>
         <FormGroup>
