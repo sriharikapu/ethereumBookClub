@@ -21,18 +21,22 @@ contract BookClub is usingOraclize{
     uint matchId;
   }
 
-    struct userDetails{
-    string r;
-    address taker;
-    uint matchId;
+    struct UserDetails{
+    string email;
+    string preferences;
+    string booksAvailable;
   }
 
+  mapping(address => UserDetails) userInfo;
   struct VoteDetails{
     address traitor;
     uint start;
     uint yays;
     uint nays;
   }
+
+
+
 
   mapping(uint => VoteDetails) votes;
   uint vote_nonce;
@@ -84,6 +88,18 @@ contract BookClub is usingOraclize{
     rating[_user] = (rating[_user]*reputation[_user] + _rating) / (reputation[_user] + 1);
   }
   
+  function setUserInfo(string _email,string _pref, string _books) public {
+    userInfo[msg.sender] = UserDetails({
+      email:_email,
+      preferences:_pref,
+      booksAvailable:_books
+      });
+  }
+
+  function getUserInfo(address _member) public constant returns(string,string,string){
+    UserDetails memory _user = userInfo[_member];
+    return(_user.email,_user.preferences,_user.booksAvailable);
+  }
 
   function isMember(address _user) public constant returns(bool){
     return members[_user];
@@ -173,7 +189,7 @@ contract BookClub is usingOraclize{
 
 
   function setPartnerBridge(string _connected) public{
-    partnerBridge = _connected;
+    partnerBridge =  strConcat('"',_connected,'"');
   }
   
   function setAPI(string _api) public returns(string){
@@ -212,16 +228,15 @@ contract BookClub is usingOraclize{
 
 function toAsciiString(address x) returns (string) {
     bytes memory s = new bytes(40);
-    for (uint i = 2; i < 20; i++) {
+    for (uint i = 0; i < 20; i++) {
         byte b = byte(uint8(uint(x) / (2**(8*(19 - i)))));
         byte hi = byte(uint8(b) / 16);
         byte lo = byte(uint8(b) - 16 * uint8(hi));
-        s[2*i+2] = char(hi);
-        s[2*i+3] = char(lo);            
+        s[2*i] = char(hi);
+        s[2*i+1] = char(lo);            
     }
     return string(s);
 }
-
 function char(byte b) returns (byte c) {
     if (b < 10) return byte(uint8(b) + 0x30);
     else return byte(uint8(b) + 0x57);
