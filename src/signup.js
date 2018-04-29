@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import './App.css';
-import { Button,Form, FormGroup, Col, ControlLabel, FormControl
+import { Button,Form, FormGroup, Col, ControlLabel, FormControl , Navbar, NavItem, Nav, NavDropdown, MenuItem
           } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 
@@ -12,9 +12,9 @@ class SignUp extends Component {
     super(props)
 
     this.state = {
-      email: "",
-      books: "",
-      trade: ""
+      email: "blank",
+      books: "blank",
+      trade: "blank"
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
@@ -23,6 +23,7 @@ class SignUp extends Component {
   handleSubmit(e) {
     e.preventDefault()
     console.log(this.state)
+    this.props.history.push('/homepage')
   }
 
   handleChange(e) {
@@ -39,8 +40,37 @@ class SignUp extends Component {
 
 
       <div className="App">
+      <Navbar>
+        <Navbar.Header>
 
-      <Form horizontal  onSubmit={(e) => this.handleSubmit(e)}>
+          <Navbar.Brand>
+            <a href="">Hackital</a>
+          </Navbar.Brand>
+        </Navbar.Header>
+        <Nav>
+          <NavItem eventKey={1} href="#">
+            Home
+          </NavItem>
+          <NavItem eventKey={2} href="#">
+            About
+          </NavItem>
+          <NavDropdown eventKey={3} title="Detail" id="basic-nav-dropdown">
+            <MenuItem eventKey={3.1}>Technology Stack</MenuItem>
+            <MenuItem eventKey={3.2}>Members</MenuItem>
+            <MenuItem eventKey={3.3}>Hackital</MenuItem>
+            <MenuItem divider />
+          </NavDropdown>
+        </Nav>
+      </Navbar>
+
+
+
+
+        <header className="App-header">
+          <h1 className="App-title">Welcome To DeCentralBooking</h1>
+        </header>
+
+      <Form horizontal  onSubmit={(e) => this.handleSubmit(e)} className="App-Form">
         <FormGroup controlId="formHorizontalEmail">
           <Col componentClass={ControlLabel} sm={2}>
             Email
@@ -81,4 +111,4 @@ class SignUp extends Component {
   }
 }
 
-export default SignUp;
+export default withRouter(SignUp);

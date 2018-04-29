@@ -131,9 +131,7 @@ class Begin extends Component {
       <div className="App">
       <Navbar>
         <Navbar.Header>
-          <Navbar.Brand>
-            <Link to="homepage/">CoinBook</Link>
-          </Navbar.Brand>
+
           <Navbar.Brand>
             <a href="">Hackital</a>
           </Navbar.Brand>
@@ -158,13 +156,15 @@ class Begin extends Component {
 
 
         <header className="App-header">
-          <h1 className="App-title">Welcome To CoinBook</h1>
+          <h1 className="App-title">Welcome To DeCentralBooking</h1>
         </header>
         <Jumbotron>
-          <h1>Hello, Book Lover and Blockchain Enthusiast!</h1>
+          <h1>Book Your Next Book on a Sidechain!</h1>
           <p>
-            This is a special and limited book club exists on the blockchain to encourage blockgeeks to read books and
-            potentially earn more money.
+            Stake your eth on Ropsten, transact on Rinkeby!
+          </p>
+          <p>
+            Why? To prove an existing scaling solution and test cross chain transactions with Oraclize.
           </p>
           <h2>
             Use MetaMask on the <strong>Ropsten Network</strong> to join
