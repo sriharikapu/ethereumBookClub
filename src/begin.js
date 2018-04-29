@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import { Button, Jumbotron, Navbar, NavItem, Nav, NavDropdown, MenuItem, Alert} from 'react-bootstrap';
-import {Link, withRouter} from 'react-router-dom';
+import { withRouter} from 'react-router-dom';
 
 import getWeb3 from './utils/getWeb3'
 import getWeb4 from './utils/getWeb4'

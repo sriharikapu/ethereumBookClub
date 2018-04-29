@@ -6,6 +6,10 @@ import { Button,Form, FormGroup, Col, ControlLabel, FormControl , Navbar, NavIte
           } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 
+import getWeb4 from './utils/getWeb4'
+import BookClub from '../build/contracts/BookClub.json'
+
+
 class SignUp extends Component {
 
   constructor(props) {
@@ -14,16 +18,67 @@ class SignUp extends Component {
     this.state = {
       email: "blank",
       books: "blank",
-      trade: "blank"
+      trade: "blank",
+      web3: null
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
   }
 
+  componentWillMount() {
+    // Get network provider and web3 instance.
+    // See utils/getWeb4 for more info.
+
+
+    getWeb4
+    .then(results => {
+      this.setState({
+        web3: results.web3
+      })
+
+      // Instantiate contract once web3 provided.
+    })
+    .catch(() => {
+      console.log('Error finding web3.')
+    })
+  }
+
+
   handleSubmit(e) {
     e.preventDefault()
     console.log(this.state)
-    this.props.history.push('/homepage')
+    if (this.state.web3) {
+      console.log("cool")
+      
+      const contract = require('truffle-contract')
+      const bookClub = contract(BookClub)
+      bookClub.setProvider(this.state.web3.currentProvider)
+  
+      // Declaring this for later so we can chain functions on bookClub.
+      var bookClubInstance
+  
+      // Get accounts.
+      this.state.web3.eth.getAccounts((error, accounts) => {
+        bookClub.deployed().then((instance) => {
+          bookClubInstance = instance
+  
+        }).then((result) => {
+          // Get the value from the contract to prove it worked.
+          console.log(accounts)
+          bookClubInstance.setUserInfo.sendTransaction(this.state.email, this.state.books, this.state.trade, {from: accounts[0]}).then((result) => {
+            if(result) {
+              console.log("sent")
+
+              this.props.history.push('/homepage')
+                
+  
+            } 
+
+          })
+        })
+      })
+    }
+
   }
 
   handleChange(e) {
