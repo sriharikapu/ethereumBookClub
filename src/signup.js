@@ -8,9 +8,29 @@ import { withRouter } from 'react-router-dom';
 
 class SignUp extends Component {
 
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      email: "",
+      books: "",
+      trade: ""
+    }
+    this.handleChange = this.handleChange.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
+  }
+
   handleSubmit(e) {
     e.preventDefault()
-    
+    console.log(this.state)
+  }
+
+  handleChange(e) {
+    let name = e.target.name
+    let val = e.target.value
+    let newState = {...this.state}
+    newState[name] = val
+    this.setState(newState)
   }
 
   render() {
@@ -26,7 +46,7 @@ class SignUp extends Component {
             Email
           </Col>
           <Col sm={10}>
-            <FormControl type="input" placeholder="Email" />
+            <FormControl name='email' type="input" placeholder="Email" onChange={this.handleChange} />
           </Col>
         </FormGroup>
 
@@ -35,7 +55,7 @@ class SignUp extends Component {
             Favourite Books
           </Col>
           <Col sm={10}>
-            <FormControl type="input" placeholder="Book Preferences, seperated by commas" />
+            <FormControl name='books' type="input" placeholder="Book Preferences, seperated by commas" onChange={this.handleChange}/>
           </Col>
         </FormGroup>
 
@@ -44,7 +64,7 @@ class SignUp extends Component {
             Book Willing To Trade
           </Col>
           <Col sm={10}>
-            <FormControl type="input" placeholder="Books to trade, seperated by commas" />
+            <FormControl name='trade' type="input" placeholder="Books to trade, seperated by commas" onChange={this.handleChange}/>
           </Col>
         </FormGroup>
         <FormGroup>
