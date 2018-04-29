@@ -47,9 +47,9 @@ contract BookClub is usingOraclize{
   
   //Bridge Functionality
 
-  string public partnerBridge; //address of bridge contract on other chain
-  string public api;
-  string public parameters;
+  string private partnerBridge; //address of bridge contract on other chain
+  string private api;
+  string private parameters;
   uint public lastValue;
   bytes4 private method_data;
   mapping(address => uint) departingBalance;
@@ -63,7 +63,7 @@ contract BookClub is usingOraclize{
   function BookClub() public{
     vote_nonce = 0;
     method_data = this.isMember.selector;
-    setAPI("json(https://ropsten.infura.io/).result");
+    setAPI("json(https://rinkeby.infura.io/).result");
   }
   
 
@@ -155,15 +155,15 @@ contract BookClub is usingOraclize{
   }
 
 //Need to change callback to accept bool as result
-    function __callback(bytes32 myId, string result) public {
-        require(msg.sender == oraclize_cbAddress());
-        lastValue = parseInt(result);
-        if(lastValue > 0){
-          address _user = query[myId];
+    function __callback(bytes32 myid, string result){
+        //require(msg.sender == oraclize_cbAddress());
+        //lastValue = parseInt(result);
+        //if(lastValue > 0){
+          address _user = query[myid];
           members[_user] = true;
           emit NewMember(_user);
           membersCount += 1;
-        }
+        //}
     }
 
 
@@ -174,7 +174,7 @@ contract BookClub is usingOraclize{
             emit Print("Oraclize query was sent, standing by for the answer..");
             string memory _n_user = toAsciiString(_user);
             string memory _params = createQuery_value(_n_user);
-             bytes32 queryId = oraclize_query("URL",api,_params);
+             bytes32 queryId = oraclize_query("URL",api,_params, 1000000);
              query[queryId] = _user;
         }
       }
@@ -192,21 +192,15 @@ contract BookClub is usingOraclize{
     partnerBridge =  strConcat('"',_connected,'"');
   }
   
-  function setAPI(string _api) public returns(string){
+  function setAPI(string _api) public{
       api = _api; 
-      return api;  //
   }
 
   function departingMember(address _former) public returns(uint){
     return departingBalance[_former];
   }
 
-  mapping (address => uint) deposited_balances;
-  function getDeposit(address _user) public returns(uint){
-    return deposited_balances[_user];
-  }
-
-    function fromCode(bytes4 code) public view returns (string) {                                                                                    
+    function fromCode(bytes4 code) internal view returns (string) {                                                                                    
     bytes memory result = new bytes(10);                                                                                                         
     result[0] = byte('0');
     result[1] = byte('x');
@@ -226,7 +220,7 @@ contract BookClub is usingOraclize{
     revert();                                                                                                                                    
 }                                                                                                                                                
 
-function toAsciiString(address x) returns (string) {
+function toAsciiString(address x) internal returns (string) {
     bytes memory s = new bytes(40);
     for (uint i = 0; i < 20; i++) {
         byte b = byte(uint8(uint(x) / (2**(8*(19 - i)))));
@@ -237,7 +231,7 @@ function toAsciiString(address x) returns (string) {
     }
     return string(s);
 }
-function char(byte b) returns (byte c) {
+function char(byte b) internal returns (byte c) {
     if (b < 10) return byte(uint8(b) + 0x30);
     else return byte(uint8(b) + 0x57);
 }

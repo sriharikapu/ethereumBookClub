@@ -45,7 +45,7 @@ contract Bridge is usingOraclize{
   function Bridge() public {
       method_data = this.departingMember.selector;
       owner = msg.sender;
-      setAPI("json(https://rinkeby.infura.io/).result");
+      setAPI("json(https://ropsten.infura.io/).result");
   }
 
   function setFee(uint _fee) public onlyOwner(){

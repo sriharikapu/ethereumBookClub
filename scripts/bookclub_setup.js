@@ -1,5 +1,5 @@
 var BookClub = artifacts.require("BookClub");
-var bridgeAddress = "0x8276c4012116588547da5ce1e936fee6d2a99350";
+var bridgeAddress = "0x28c62b13617c6aef8307dcca6c47b32ce08613c5";
 
 
 module.exports =async function(callback) {

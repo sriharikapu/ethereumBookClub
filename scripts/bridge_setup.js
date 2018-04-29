@@ -1,5 +1,5 @@
 var Bridge = artifacts.require("Bridge");
-var bookClubAddress = "0x26c89a4d33f99d6a5cf3bda0fd49154471d19401";
+var bookClubAddress = "0xb4ae79be401b1e8298eac1bd80279852b7f2856b";
 
 
 module.exports =async function(callback) {
